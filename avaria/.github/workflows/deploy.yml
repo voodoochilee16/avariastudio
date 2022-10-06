@@ -1,0 +1,25 @@
+name: Build & Deploy 
+
+on: 
+  push: 
+    branches: [main] 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy Nodejs app
+        uses: appleboy/ssh-action@v0.1.2
+        with:
+          host: ${{secrets.SSH_HOST}}
+          key: ${{secrets.SSH_KEY}}
+          username: ${{secrets.SSH_USERNAME}}
+          
+          script: | 
+            cd sveltekit_projects
+            cd design-history-society
+            git pull
+            cd dhs
+            npm run build
+            pm2 restart index
+            echo "Deployment successful to digital ocean"
